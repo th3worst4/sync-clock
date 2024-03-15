@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "[WARNING]: this script changes your machine's clock to GMT-3"
+read -p "Are you sure you want to perform this action? [y/N] " resp
+
+if [[ $resp != "y" ]] && [[ $resp != "Y" ]]; then
+    echo "Canceling this operation"
+else
+    echo "Continuing..."
+    
+    source ../bin/activate
+     
+    now=$(python3 sync-clock.py)
+
+    if [[ $now != "0" ]]; then
+        date -s "${now}" > /dev/null
+        echo "The date was updated successfully"
+    else
+        echo "Some error occurred on sync-clock.py"
+        echo "Canceling this operation"
+    fi
+
+    deactivate
+fi
